@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Diary; // App は Diary.php の namespace App; からきている
+use App\Http\Requests\CreateDiary; // 認証ルールを作ったRequestファイルを読み込む
 
 class DiaryController extends Controller
 {
@@ -35,8 +36,30 @@ class DiaryController extends Controller
 
     // 新規追加の場面で投稿ボタンが押されたとき
     // 投稿処理をするメソッド
-    public function store(Request $request)
+    // 引数のRequest = $_POST みたいなイメージ
+    public function store(CreateDiary $request)
     {
-        dd($request->title);
+        // ここからデータの登録・・・投稿されたデータをdiariesテーブルに入れたい
+        // Diaryモデルのインスタンスを取得
+        $diary = new Diary();
+
+        // 画面で入力されたタイトルを代入
+        // 画面で渡ってきたtitle($requestに入っている)を、設定
+        $diary->title = $request->title;
+        // 画面で入力された本文を代入
+        $diary->body = $request->body;
+
+        // モデルからデータベースにデータを追加するとき save() = INSERT INTO
+        $diary->save(); // DBに保存
+
+        // 一覧ページにリダイレクト (これやらないと、戻るボタン押したとき[二重登録される]) [フォームを再送信しますか？]のアラートが出なくなる
+        // 戻ったときのフォームを再送信しますか？の対策のため
+        return redirect()->route('diary.index');
+    }
+
+    // 削除を実行するメソッド
+    public function destroy()
+    {
+
     }
 }

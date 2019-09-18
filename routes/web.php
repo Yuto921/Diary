@@ -21,7 +21,9 @@
 // Route::post POST送信のこと
 Route::get('/', 'DiaryController@index')->name('diary.index');
 
-Route::get('diary/create', 'DiaryController@create');
+Route::get('diary/create', 'DiaryController@create')->name('diary.create');
 
 // 省略するためにnameを使ってaction先を書く <form action="{{ route('diary.create') }}" method="POST">
 Route::post('diary/create', 'DiaryController@store')->name('diary.create');
+
+Route::delete('diary/{ id }/delete', 'DiaryController@destroy')->name('diary.destroy');

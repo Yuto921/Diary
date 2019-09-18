@@ -8,8 +8,8 @@
     <title>一覧表示画面</title>
 </head>
 <body>
-    <h1>一覧画面</h1>
-
+    <a href="{{ route('diary.create') }}" class="btn btn-primary btn-block">新規投稿</a>
+    
     <!-- コントローラーから送られたキーで値をとる・この場合、$diariesがキーである -->
     @foreach($diaries as $diary)
         <div class="m-4 p-4 border border-primary">
