@@ -15,6 +15,9 @@ class DiariesTableSeeder extends Seeder
      */
     public function run() // この中にサンプルデータを記述する
     {
+        // first() usersテーブルの一番最初のカラムを取得
+        $user = DB::table('users')->first(); //追加
+
         //(ただ書いているだけ=次の作業を楽にするため)
         $diaries = [
             [
@@ -40,6 +43,7 @@ class DiariesTableSeeder extends Seeder
             DB::table('diaries')->insert([
                 'title' => $diary['title'],
                 'body' => $diary['body'],
+                'user_id' => $user->id, //追加
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);

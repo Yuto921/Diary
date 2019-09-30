@@ -27,4 +27,14 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    // diaries テーブルの関連をかく リレーションをやっておくとデータを取るのが簡単になる
+    public function diaries()
+    {
+        // hasMany 関係をかく
+        return $this->hasMany('App\Diary');
+        // return $this->hasOne('App\Diary'); // 1対1
+        // return $this->belongsToMany('App\Diary'); //　多対多
+
+    }
 }

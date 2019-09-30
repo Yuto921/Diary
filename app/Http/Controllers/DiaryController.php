@@ -48,6 +48,7 @@ class DiaryController extends Controller
         $diary->title = $request->title;
         // 画面で入力された本文を代入
         $diary->body = $request->body;
+        $diary->user_id = \Auth::user()->id; //追加 ログインしてるユーザーのidを保存 \Auth::user() = ログインしているユーザー
 
         // モデルからデータベースにデータを追加するとき save() = INSERT INTO
         $diary->save(); // DBに保存
@@ -58,8 +59,67 @@ class DiaryController extends Controller
     }
 
     // 削除を実行するメソッド
-    public function destroy()
+    public function destroy(Diary $diary) // バインディングした
+    {
+        // URLを直接入力しても表示できないようにする ログインしているユーザー != 投稿のユーザーIDと一致していなければ、
+        if (\Auth::user()->id !== $diary->user_id) {
+            abort(403);
+        } 
+
+        // Diaryモデルのインスタンス化 しなくてもいけるべや
+        // $diaries = new Diary();
+
+        // Diaryモデルを使って、削除したい要素の取得
+        // $diary = $diaries->find($id);
+        // $diary = Diary::find($id);
+        
+        // 取得した要素を削除
+        $diary->delete();
+        
+        // 一覧画面に戻る
+        return redirect()->route('diary.index');
+
+    }
+
+    // 編集画面を表示するメソッド
+    // public function edit(int $id)
+    public function edit(Diary $diary) // $diary = Diary::find($id); 自動的に該当するモデルのインスタンスを作成
     {
 
+        // URLを直接入力しても表示できないようにする ログインしているユーザー != 投稿のユーザーIDと一致していなければ、
+        if (\Auth::user()->id !== $diary->user_id) {
+            abort(403);
+        } 
+
+
+        // この仕組みを、ルートモデルバインディング [バインド＝縛られる・対応]
+
+        // IDをもとに1件取得　バインディングしたからいらない
+        // $diary = Diary::find($id);
+
+        // 編集画面を表示するとき、取得結果を渡す
+        return view('diaries.edit', [
+            'diary' => $diary
+        ]);
+    }
+
+    // 編集処理をするメソッド
+    public function update(CreateDiary $request, Diary $diary) // バインディングした
+    {
+
+        // URLを直接入力しても表示できないようにする ログインしているユーザー != 投稿のユーザーIDと一致していなければ、
+        if (\Auth::user()->id !== $diary->user_id) {
+            abort(403);
+        }
+        
+        // IDをもとに、投稿のタイトル、本文を更新 インスタンス化しなくても使えるということは、static function find ()
+        // $diary = Diary::find($id);
+
+        $diary->title = $request->title;
+        $diary->body = $request->body;
+
+        $diary->save(); // updateしているからデータベースで自動で、更新の日時が入る migrationファイルにtimestampがある
+        // 一覧ページにリダイレクト
+        return redirect()->route('diary.index');
     }
 }
