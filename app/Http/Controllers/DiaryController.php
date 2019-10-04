@@ -122,4 +122,13 @@ class DiaryController extends Controller
         // 一覧ページにリダイレクト
         return redirect()->route('diary.index');
     }
+
+    // いいねの数
+    public function like(int $id)
+    {
+        $diary = Diary::where('id', $id)->with('likes')->first();
+        // Diaryモデルのlikesメソッド
+        $diary->likes()->attach(Auth::user()->id);
+    }
+
 }
