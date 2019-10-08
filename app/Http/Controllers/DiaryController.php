@@ -17,7 +17,8 @@ class DiaryController extends Controller
     {
         // diariesテーブルのデータを全件取得
         // allメソッド : 全件データを取得するメソッド Modelクラスの中に入っているから使える。extendsしている
-        $diaries = Diary::all(); // Diary だから、　diariesのテーブルにアクセス(この場合allメソッドを)する
+        // $diaries = Diary::all(); // Diary だから、　diariesのテーブルにアクセス(この場合allメソッドを)する
+        $diaries = Diary::with('likes')->orderBy('id', 'desc')->get(); // 〇〇::with('')で関連するレコードを取得
 
         // dd($diaries); // var_dump + 処理をここで中断
 
@@ -128,7 +129,13 @@ class DiaryController extends Controller
     {
         $diary = Diary::where('id', $id)->with('likes')->first();
         // Diaryモデルのlikesメソッド
-        $diary->likes()->attach(Auth::user()->id);
+        $diary->likes()->attach(\Auth::user()->id);
+    }
+
+    public function dislike(int $id)
+    {
+        $diary = Diary::where('id', $id)->with('likes')->first();
+        $diary->likes()->detach(\Auth::user()->id);
     }
 
 }
